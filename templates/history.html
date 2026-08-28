@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Veritas — History{% endblock %}
+
+{% set scans = scans | default([]) %}
+
+{% block content %}
+<div class="light-screen">
+
+  <h1 class="screen-title">Scan History</h1>
+
+  {% if scans | length == 0 %}
+  <div class="doc-card">
+    <div class="doc-row">
+      <span class="doc-name" style="color: var(--text-secondary);">No scans yet</span>
+    </div>
+  </div>
+  {% else %}
+  <div class="doc-card">
+    {% for scan in scans %}
+    <div class="doc-row">
+      <span class="doc-name">{{ scan.name }}</span>
+      <span class="doc-status {% if scan.score >= 70 %}is-verified{% else %}is-not-verified{% endif %}">{{ scan.score }}%</span>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <div class="bottom-cta">
+    <button type="button" class="primary-pill-btn" id="backBtn">New Scan</button>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('backBtn').addEventListener('click', () => {
+      window.location.href = "{{ url_for('home') }}";
+    });
+  });
+</script>
+{% endblock %}

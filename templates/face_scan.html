@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Veritas — Face Recognition{% endblock %}
+
+{% block content %}
+<div class="camera-screen" id="faceScreen">
+
+  <video id="cameraFeed" class="camera-feed mirrored" autoplay playsinline muted></video>
+  <canvas id="captureCanvas" class="visually-hidden"></canvas>
+
+  <div class="camera-scrim-top"></div>
+  <div class="camera-scrim-bottom"></div>
+
+  <div class="face-guide" id="faceGuide"></div>
+
+  <div class="logo-badge">
+    {% include "_logo.html" %}
+  </div>
+
+  <div class="face-overlay">
+
+    <div class="face-label-pill glass-strong">
+      <h2>Face recognition</h2>
+    </div>
+
+    <div class="scan-row">
+      <button type="button" class="glass-icon-btn" id="flashBtn" aria-label="Toggle flash">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M13 2L4 14H11L10 22L20 9H13L13 2Z" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+      <div class="scanning-pill glass" id="scanningPill">
+        <span id="scanningLabel">Scanning</span>
+        <span class="scan-dot" style="animation-delay:0s"></span>
+        <span class="scan-dot" style="animation-delay:0.2s"></span>
+        <span class="scan-dot" style="animation-delay:0.4s"></span>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/camera.js') }}"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    Veritas.initFaceScreen({
+      videoId: 'cameraFeed',
+      resultUrl: "{{ url_for('results') }}",
+      scanDurationMs: 2600
+    });
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Veritas — Detected Documents{% endblock %}
+
+{% set documents = documents | default([
+  {"name": "Passport", "status": "verified"},
+  {"name": "Visa", "status": "not_verified"},
+  {"name": "National ID", "status": "verified"},
+  {"name": "Driving License", "status": "verified"},
+  {"name": "Permit", "status": "verified"}
+]) %}
+
+{% block content %}
+<div class="light-screen">
+
+  <h1 class="screen-title">Detected Documents</h1>
+
+  <div class="doc-card">
+    {% for doc in documents %}
+    <div class="doc-row">
+      <span class="doc-name">{{ doc.name }}</span>
+
+      {% if doc.status == "verified" %}
+      <span class="doc-status is-verified">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5 13L9.5 17.5L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Verified
+      </span>
+
+      {% elif doc.status == "not_verified" %}
+      <span class="doc-status is-not-verified">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M6 6L18 18M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+        </svg>
+        Not verified
+      </span>
+
+      {% else %}
+      <span class="doc-status is-processing">Processing…</span>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="bottom-cta">
+    <button
+      type="button"
+      class="primary-pill-btn"
+      id="scanFaceBtn"
+      {% if documents | selectattr("status", "equalto", "verified") | list | length == 0 %}disabled{% endif %}
+    >Scan Face</button>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('scanFaceBtn');
+    if (btn) {
+      btn.addEventListener('click', () => {
+        window.location.href = "{{ url_for('face_scan') }}";
+      });
+    }
+  });
+</script>
+{% endblock %}
