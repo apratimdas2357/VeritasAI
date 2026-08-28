@@ -4,7 +4,7 @@ Veritas — minimal Flask scaffold wiring up the screen templates.
 Run:
     pip install flask --break-system-packages
     python app.py
-Then open http://localhost:7860 (use HTTPS/ngrok or deploy for real
+Then open http://localhost:8000 (use HTTPS/ngrok or deploy for real
 camera access on a phone — getUserMedia requires a secure context).
 
 Wire /api/scan/capture, /api/scan/face, and the document/results data

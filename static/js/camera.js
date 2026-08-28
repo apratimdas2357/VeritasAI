@@ -3,8 +3,8 @@
    Handles live camera feed (getUserMedia), document capture,
    and the face-recognition scanning sequence.
 
-   Note: getUserMedia requires HTTPS (or localhost). Hugging Face
-   Spaces serves over HTTPS by default, so this works there as-is.
+   Note: getUserMedia requires HTTPS (or localhost). Render
+   serves over HTTPS by default, so this works there as-is.
    ============================================================ */
 window.Veritas = window.Veritas || {};
 
