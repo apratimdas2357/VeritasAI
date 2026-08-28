@@ -12,6 +12,7 @@ below into your actual OCR + tampering + face-verification pipeline.
 """
 
 from flask import Flask, render_template, jsonify, request
+from pipeline import process_document
 
 app = Flask(__name__)
 
@@ -61,8 +62,25 @@ def api_scan_capture():
     """Receives one captured/uploaded document frame. Hook OCR here."""
     image = request.files.get("image")
     sequence = request.form.get("sequence")
-    # TODO: run OCR extraction + tampering detection on `image`
-    return jsonify({"ok": True, "sequence": sequence, "status": "processing"})
+
+    if not image:
+        return jsonify({"ok": False, "error": "No image provided"}), 400
+
+    try:
+        # Step 1: Capture (Frontend -> Flask) received the image
+        image_bytes = image.read()
+        confidence_score, findings, merged_data = process_document(image_bytes)
+
+        return jsonify({
+            "ok": True,
+            "sequence": sequence,
+            "status": "processing_complete",
+            "confidence_score": confidence_score,
+            "findings": findings,
+            "data": merged_data
+        })
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
 
 
 if __name__ == "__main__":
