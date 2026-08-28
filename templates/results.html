@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Veritas — Results{% endblock %}
+
+{% set score = score | default(94) %}
+{% set findings = findings | default([
+  "Documents match the person.",
+  "No impersonation detected.",
+  "No fake documents detected.",
+  "Checksum passed."
+]) %}
+
+{% block content %}
+<div class="light-screen">
+
+  <p class="result-label">Confidence Score</p>
+  <p class="confidence-score{% if score < 70 %} is-low{% endif %}">{{ score }}%</p>
+
+  <ul class="result-list">
+    {% for item in findings %}
+    <li>{{ item }}</li>
+    {% endfor %}
+  </ul>
+
+  <div class="bottom-cta">
+    <button type="button" class="primary-pill-btn" id="newScanBtn">New Scan</button>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('newScanBtn').addEventListener('click', () => {
+      window.location.href = "{{ url_for('home') }}";
+    });
+  });
+</script>
+{% endblock %}
