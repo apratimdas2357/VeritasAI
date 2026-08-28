@@ -19,7 +19,7 @@ app = Flask(__name__)
 @app.route("/")
 @app.route("/home")
 def home():
-    return render_template("home.html", shots_taken=0, shots_required=5)
+    return render_template("home.html", shots_taken=1, shots_required=4)
 
 
 @app.route("/documents")

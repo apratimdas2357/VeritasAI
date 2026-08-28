@@ -2,8 +2,8 @@
    Veritas — Design Tokens
    ============================================================ */
 :root{
-  --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", "Segoe UI", sans-serif;
-  --font-text: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Segoe UI", sans-serif;
+  --font-display: "SF Pro", -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif;
+  --font-text: "SF Pro", -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif;
 
   --bg-screen: #F4F5F7;
   --text-primary: #16181C;
@@ -205,26 +205,27 @@ ul{ margin: 0; padding: 0; list-style: none; }
   font-family: var(--font-display);
   font-size: 22px;
   font-weight: 700;
-  color: #fff;
+  color: #000;
   line-height: 1.15;
 }
 .status-card .status-text .label{
   font-size: 14px;
-  color: rgba(255,255,255,0.9);
+  font-weight: 600;
+  color: #000;
   margin-top: 2px;
 }
 .history-btn{
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  background: rgba(255, 170, 150, 0.35);
-  border: 1px solid rgba(255,255,255,0.45);
+  width: 64px;
+  height: 64px;
+  border-radius: 20px;
+  background: #F0CECA;
+  border: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
+  color: #000;
 }
-.history-btn svg{ width: 20px; height: 20px; }
+.history-btn svg{ width: 24px; height: 24px; }
 
 .upload-pill{
   width: 100%;
@@ -232,7 +233,7 @@ ul{ margin: 0; padding: 0; list-style: none; }
   text-align: center;
   font-size: 16px;
   font-weight: 600;
-  color: #fff;
+  color: #000;
 }
 
 .controls-row{
