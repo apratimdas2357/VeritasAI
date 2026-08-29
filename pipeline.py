@@ -3,6 +3,8 @@ import numpy as np
 import re
 import datetime
 import pytesseract
+import uuid
+import os
 from passporteye import read_mrz
 
 def process_document(image_bytes):
@@ -20,9 +22,6 @@ def process_document(image_bytes):
     # Note: A real system would deskew here (e.g. cv2.minAreaRect + affine warp)
 
     # Step 3: OCR Extraction & Step 4: Field Extraction
-    import uuid
-    import os
-
     # We attempt to read the MRZ using PassportEye
     # Generate a unique temp file to avoid race conditions
     temp_path = f"temp_capture_{uuid.uuid4().hex}.jpg"

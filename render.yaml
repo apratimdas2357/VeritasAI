@@ -3,7 +3,7 @@ services:
     name: veritas-app
     env: python
     buildCommand: ./build.sh
-    startCommand: gunicorn wsgi:app
+    startCommand: gunicorn your_application.wsgi --bind 0.0.0.0:$PORT
     envVars:
       - key: PYTHON_VERSION
         value: 3.10.12
