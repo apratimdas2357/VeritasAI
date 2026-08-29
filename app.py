@@ -17,6 +17,12 @@ from pipeline import process_document
 app = Flask(__name__)
 
 
+@app.route("/api/health")
+def health_check():
+    """Lightweight endpoint for UptimeRobot to ping every 5 minutes to prevent instance sleep."""
+    return jsonify({"status": "ok"}), 200
+
+
 @app.route("/")
 @app.route("/home")
 def home():
