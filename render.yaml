@@ -2,7 +2,7 @@ services:
   - type: web
     name: veritas-app
     env: python
-    buildCommand: ./build.sh
+    buildCommand: pip install -r requirements.txt
     startCommand: gunicorn your_application.wsgi --bind 0.0.0.0:$PORT
     envVars:
       - key: PYTHON_VERSION
