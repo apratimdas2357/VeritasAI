@@ -1,24 +1,14 @@
 {% extends "base.html" %}
 {% block title %}Veritas — Results{% endblock %}
 
-{% set score = score | default(94) %}
-{% set findings = findings | default([
-  "Documents match the person.",
-  "No impersonation detected.",
-  "No fake documents detected.",
-  "Checksum passed."
-]) %}
-
 {% block content %}
 <div class="light-screen">
 
   <p class="result-label">Confidence Score</p>
-  <p class="confidence-score{% if score < 70 %} is-low{% endif %}">{{ score }}%</p>
+  <p class="confidence-score" id="scoreDisplay">--%</p>
 
-  <ul class="result-list">
-    {% for item in findings %}
-    <li>{{ item }}</li>
-    {% endfor %}
+  <ul class="result-list" id="findingsList">
+    <li>Processing...</li>
   </ul>
 
   <div class="bottom-cta">
@@ -34,6 +24,36 @@
     document.getElementById('newScanBtn').addEventListener('click', () => {
       window.location.href = "{{ url_for('home') }}";
     });
+
+    // Grab the last available scan result to show final findings
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    const findingsList = document.getElementById('findingsList');
+
+    let finalResult = null;
+    for (let i = 4; i >= 1; i--) {
+        const resString = sessionStorage.getItem(`scan_result_${i}`);
+        if (resString) {
+            try {
+                finalResult = JSON.parse(resString);
+                break;
+            } catch (e) {}
+        }
+    }
+
+    if (finalResult) {
+        const score = finalResult.confidence_score || 0;
+        scoreDisplay.textContent = `${score}%`;
+        if (score < 80) {
+            scoreDisplay.classList.add('is-low');
+        }
+
+        const findings = finalResult.findings || ["Processing incomplete."];
+        findingsList.innerHTML = findings.map(f => `<li>${f}</li>`).join('');
+    } else {
+        scoreDisplay.textContent = "0%";
+        scoreDisplay.classList.add('is-low');
+        findingsList.innerHTML = "<li>No documents scanned.</li>";
+    }
   });
 </script>
 {% endblock %}

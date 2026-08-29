@@ -1,45 +1,16 @@
 {% extends "base.html" %}
 {% block title %}Veritas — Detected Documents{% endblock %}
 
-{% set documents = documents | default([
-  {"name": "Passport", "status": "verified"},
-  {"name": "Visa", "status": "not_verified"},
-  {"name": "National ID", "status": "verified"},
-  {"name": "Driving License", "status": "verified"},
-  {"name": "Permit", "status": "verified"}
-]) %}
-
 {% block content %}
 <div class="light-screen">
 
   <h1 class="screen-title">Detected Documents</h1>
 
-  <div class="doc-card">
-    {% for doc in documents %}
+  <div class="doc-card" id="documentList">
+    <!-- Will be populated by JS from sessionStorage -->
     <div class="doc-row">
-      <span class="doc-name">{{ doc.name }}</span>
-
-      {% if doc.status == "verified" %}
-      <span class="doc-status is-verified">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M5 13L9.5 17.5L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        Verified
-      </span>
-
-      {% elif doc.status == "not_verified" %}
-      <span class="doc-status is-not-verified">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M6 6L18 18M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
-        </svg>
-        Not verified
-      </span>
-
-      {% else %}
-      <span class="doc-status is-processing">Processing…</span>
-      {% endif %}
+        <span class="doc-status is-processing">Loading results...</span>
     </div>
-    {% endfor %}
   </div>
 
   <div class="bottom-cta">
@@ -47,7 +18,6 @@
       type="button"
       class="primary-pill-btn"
       id="scanFaceBtn"
-      {% if documents | selectattr("status", "equalto", "verified") | list | length == 0 %}disabled{% endif %}
     >Scan Face</button>
   </div>
 
@@ -63,6 +33,55 @@
         window.location.href = "{{ url_for('face_scan') }}";
       });
     }
+
+    // Pull results from sessionStorage
+    const container = document.getElementById('documentList');
+    let resultsFound = false;
+    let html = '';
+
+    for (let i = 1; i <= 4; i++) {
+        const resString = sessionStorage.getItem(`scan_result_${i}`);
+        if (resString) {
+            resultsFound = true;
+            try {
+                const res = JSON.parse(resString);
+                // Only try to show data if we got a successful pipeline return
+                if (res.data && res.data.extracted_data && res.data.extracted_data.type) {
+                    const docType = res.data.extracted_data.type;
+                    const isValid = res.confidence_score > 50; // simple heuristic
+
+                    html += `
+                    <div class="doc-row">
+                      <span class="doc-name">${docType}</span>
+
+                      ${isValid ? `
+                      <span class="doc-status is-verified">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M5 13L9.5 17.5L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Verified
+                      </span>` : `
+                      <span class="doc-status is-not-verified">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M6 6L18 18M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+                        </svg>
+                        Not verified
+                      </span>
+                      `}
+                    </div>`;
+                }
+            } catch (e) {
+                console.error("Failed parsing session storage result", e);
+            }
+        }
+    }
+
+    if (resultsFound && html !== '') {
+        container.innerHTML = html;
+    } else {
+        container.innerHTML = `<div class="doc-row"><span class="doc-name">No documents detected</span></div>`;
+    }
+
   });
 </script>
 {% endblock %}

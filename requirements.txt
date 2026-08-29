@@ -5,5 +5,4 @@ pytesseract==0.3.10
 PassportEye==2.2.2
 scikit-learn
 scikit-image
-face_recognition
 numpy
