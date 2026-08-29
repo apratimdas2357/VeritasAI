@@ -4,7 +4,7 @@ Veritas — minimal Flask scaffold wiring up the screen templates.
 Run:
     pip install flask --break-system-packages
     python app.py
-Then open http://localhost:7860 (use HTTPS/ngrok or deploy for real
+Then open http://localhost:8000 (use HTTPS/ngrok or deploy for real
 camera access on a phone — getUserMedia requires a secure context).
 
 Wire /api/scan/capture, /api/scan/face, and the document/results data
@@ -12,6 +12,7 @@ below into your actual OCR + tampering + face-verification pipeline.
 """
 
 from flask import Flask, render_template, jsonify, request
+from pipeline import process_document
 
 app = Flask(__name__)
 
@@ -19,7 +20,7 @@ app = Flask(__name__)
 @app.route("/")
 @app.route("/home")
 def home():
-    return render_template("home.html", shots_taken=1, shots_required=4)
+    return render_template("home.html", shots_taken=0, shots_required=4)
 
 
 @app.route("/documents")
@@ -61,8 +62,25 @@ def api_scan_capture():
     """Receives one captured/uploaded document frame. Hook OCR here."""
     image = request.files.get("image")
     sequence = request.form.get("sequence")
-    # TODO: run OCR extraction + tampering detection on `image`
-    return jsonify({"ok": True, "sequence": sequence, "status": "processing"})
+
+    if not image:
+        return jsonify({"ok": False, "error": "No image provided"}), 400
+
+    try:
+        # Step 1: Capture (Frontend -> Flask) received the image
+        image_bytes = image.read()
+        confidence_score, findings, merged_data = process_document(image_bytes)
+
+        return jsonify({
+            "ok": True,
+            "sequence": sequence,
+            "status": "processing_complete",
+            "confidence_score": confidence_score,
+            "findings": findings,
+            "data": merged_data
+        })
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
 
 
 if __name__ == "__main__":

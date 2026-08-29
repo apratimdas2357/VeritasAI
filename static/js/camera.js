@@ -3,8 +3,8 @@
    Handles live camera feed (getUserMedia), document capture,
    and the face-recognition scanning sequence.
 
-   Note: getUserMedia requires HTTPS (or localhost). Hugging Face
-   Spaces serves over HTTPS by default, so this works there as-is.
+   Note: getUserMedia requires HTTPS (or localhost). Render
+   serves over HTTPS by default, so this works there as-is.
    ============================================================ */
 window.Veritas = window.Veritas || {};
 
@@ -138,7 +138,12 @@ window.Veritas = window.Veritas || {};
     try {
       const res = await fetch('/api/scan/capture', { method: 'POST', body: formData });
       if (!res.ok) throw new Error(`Upload failed: ${res.status}`);
-      return await res.json();
+      const data = await res.json();
+
+      // Store the pipeline results in sessionStorage so they can be
+      // retrieved and rendered by the documents.html and results.html views
+      sessionStorage.setItem(`scan_result_${sequence}`, JSON.stringify(data));
+      return data;
     } catch (err) {
       console.warn('Veritas: capture upload skipped (no backend reachable yet)', err);
       return null;

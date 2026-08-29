@@ -1,1 +1,8 @@
 Flask==3.0.0
+gunicorn==21.2.0
+opencv-python-headless
+pytesseract==0.3.10
+PassportEye==2.2.2
+scikit-learn
+scikit-image
+numpy
