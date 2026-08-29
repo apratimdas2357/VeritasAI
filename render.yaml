@@ -1,9 +1,9 @@
 services:
   - type: web
-    name: veritas-app
+    name: veritas
     env: python
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn your_application.wsgi --bind 0.0.0.0:$PORT
+    startCommand: gunicorn --workers 1 --threads 4 --preload app:app
     envVars:
       - key: PYTHON_VERSION
         value: 3.10.12
